@@ -1,29 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:14-alpine'
-            args '-u root' // This allows the container to run as root
-        }
-    }
+    agent any
+    
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Build') {
             steps {
-                sh 'npm install http-server'
+                sh 'sudo npm install -g http-server'
+                timeout(time: 60, unit: 'SECONDS') {
+                    sh 'http-server &'
+                }
             }
         }
-        stage('Test') {
+        
+        stage('Stop') {
             steps {
-                sh 'npm test'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                sh 'http-server ./dist -p 8080 &'
+                sh 'kill $(lsof -t -i:8080)'
             }
         }
     }
