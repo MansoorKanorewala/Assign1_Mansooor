@@ -4,16 +4,16 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'sudo npm install -g http-server'
+                bat 'npm install -g http-server'
                 timeout(time: 60, unit: 'SECONDS') {
-                    sh 'http-server &'
+                    bat 'http-server &'
                 }
             }
         }
         
         stage('Stop') {
             steps {
-                sh 'kill $(lsof -t -i:8080)'
+                bat 'kill $(lsof -t -i:8080)'
             }
         }
     }
